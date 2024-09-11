@@ -1,4 +1,23 @@
-const { select } = require('@inquirer/prompts')
+const { select, input } = require('@inquirer/prompts')
+
+let tarefas = {
+    value: 'Ir na academia',
+    checked: false,
+}
+
+async function cadastrarTarefa(){
+    const tarefa = await input({message: "Digite a tarefa: "})
+
+    if(tarefa.length == 0) {
+        console.log("A tarefa não pode ser vazia")
+        console.log(" ")
+        return
+    }
+
+    tarefas.push(
+        {value: tarefa, checked: false})
+
+}
 
 async function start(){
 
@@ -7,11 +26,11 @@ async function start(){
         const opcao = await select({
             message: "--------Menu--------",
             choices: [{
-                    name: "Cadastra meta",
+                    name: "Cadastra tarefa",
                     value: "Cadastrar"
                 },
                 {
-                    name: "Lista metas"
+                    name: "Lista metas",
                     value: "Listar"
                 },
                 {
@@ -23,7 +42,8 @@ async function start(){
 
         switch(opcao){
             case "Cadastrar":
-                console.log("Vamos cadastrar")
+                await cadastrarTarefa()
+                console.log(tarefas)
                 break
             case "Listar":
                 console.log("Vamos listar")
