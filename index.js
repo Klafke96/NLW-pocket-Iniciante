@@ -27,14 +27,15 @@ async function listarTarefas(){
             instructions: false,
     })
 
+    tarefas.forEach((t) => {
+        t.checked = false
+    })
+
     if (respostas.length == 0) {
         console.log("Nenhuma tarefa selecionada")
         return
     }
 
-    tarefas.forEach((t) => {
-        t.checked = false
-    })
 
     respostas.forEach((resposta) => {
         const tarefa = tarefas.find((t) => {
@@ -60,9 +61,49 @@ async function tarefasRealizadas(){
     }
 
     await select({
-        message: "Tarefas realizadas",
+        message: "Tarefas realizadas " + realizadas.length,
         choices: [...realizadas]
     })
+}
+
+async function tarefasAbertas(){
+    const abertas = tarefas.filter((tarefa) => {
+        return !tarefa.checked
+    })
+
+    if (abertas.length == 0) {
+        console.log("Não há tarefas abertas")
+        return
+    }
+
+    await select({
+        message: "Tarefas abertas " + abertas.length,
+        choices: [...abertas]
+    })
+}
+
+async function removerTarefas(){
+    const tarefasDesmarcadas = tarefas.map((tarefa) => {
+        return { value: tarefa.value, checked: false}
+    })
+
+    const itemsDeletar = await checkbox({
+        message: "Selecione as tarefas que deseja remover:",
+        choices: [...tarefasDesmarcadas],
+        instructions: false,
+    })
+    if (itemsDeletar.length == 0) {
+        console.log("Nenhum item para deletar")
+        return
+    }
+
+    itemsDeletar.forEach((item) => {
+        tarefas = tarefas.filter((tarefa) => {
+            return tarefa.value != item
+        })
+    })
+
+    console.log("Tarefa(s) deletada(s) com sucesso!")
 }
 
 async function start(){
@@ -84,6 +125,14 @@ async function start(){
                     value: "Realizadas"
                 },
                 {
+                    name: "Tarefas abertas",
+                    value: "Abertas"
+                },
+                {
+                    name: "Remover tarefas",
+                    value: "Remover"
+                },
+                {
                     name: "Sair",
                     value: "Sair"
                 }
@@ -100,6 +149,12 @@ async function start(){
                 break
             case "Realizadas":
                 await tarefasRealizadas()
+                break
+            case "Abertas":
+                await tarefasAbertas()
+                break
+            case "Remover":
+                await removerTarefas()
                 break
             case "Sair":
                 console.log("Até a próxima")
