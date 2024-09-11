@@ -1,11 +1,8 @@
-const { select, input } = require('@inquirer/prompts')
+const { select, input, checkbox } = require("@inquirer/prompts")
 
-let tarefas = {
-    value: 'Ir na academia',
-    checked: false,
-}
+let tarefas = []
 
-async function cadastrarTarefa(){
+async function cadastrarTarefas(){
     const tarefa = await input({message: "Digite a tarefa: "})
 
     if(tarefa.length == 0) {
@@ -17,6 +14,33 @@ async function cadastrarTarefa(){
     tarefas.push(
         {value: tarefa, checked: false})
 
+}
+
+async function listarTarefas(){
+    const respostas = await checkbox({
+        message: "Selecione as tarefas que deseja marcar como concluídas:",
+        choices: [...tarefas],
+        instructions: false,
+    })
+
+    if (respostas.length == 0) {
+        console.log("Nenhuma tarefa selecionada")
+        return
+    }
+
+    tarefas.forEach((t) => {
+        t.checked = false
+    })
+
+    respostas.forEach((resposta) => {
+        const tarefa = tarefas.find((t) => {
+            return t.value == resposta
+        })
+
+        tarefa.checked = true
+    })
+
+        console.log("Tarefa(s) marcadas como concluída(s)")
 }
 
 async function start(){
@@ -37,16 +61,16 @@ async function start(){
                     name: "Sair",
                     value: "Sair"
                 }
-            ]
+            ],
         })
 
         switch(opcao){
             case "Cadastrar":
-                await cadastrarTarefa()
+                await cadastrarTarefas()
                 console.log(tarefas)
                 break
             case "Listar":
-                console.log("Vamos listar")
+                await listarTarefas()
                 break
             case "Sair":
                 console.log("Até a próxima")
