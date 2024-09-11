@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "name": "a",
+    "value": "a",
+    "checked": true
+  },
+  {
+    "name": "c",
+    "value": "c",
+    "checked": false
+  },
+  {
+    "name": "d",
+    "value": "d",
+    "checked": false
+  }
+]
