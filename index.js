@@ -1,7 +1,24 @@
 const { select, input, checkbox } = require("@inquirer/prompts")
+const fs = require("fs").promises
 
 let mensagem = "Bem vindo ao programa de tarefas!"
+
 let tarefas = []
+
+async function carregarTarefas(){
+    try {
+        const dados = await fs.readfile("tarefas.json", "ufc-8")
+        tarefas = JSON.parse(dados)
+    }
+    catch(error) {
+        tarefas = []
+    }
+}
+
+async function salvarTarefas() {
+    await fs.writeFile("tarefas.json", JSON.stringify(tarefas, null, 2))
+    console.log("Tarefas salvas com sucesso!")
+    }
 
 async function cadastrarTarefas(){
     const tarefa = await input({message: "Digite a tarefa: "})
@@ -120,6 +137,8 @@ function mostrarMensagem(){
 
 async function start(){
 
+    carregarTarefas()
+
     while(true){
         mostrarMensagem()
 
@@ -155,9 +174,11 @@ async function start(){
         switch(opcao){
             case "Cadastrar":
                 await cadastrarTarefas()
+                await salvarTarefas()
                 break
             case "Listar":
                 await listarTarefas()
+                await salvarTarefas()
                 break
             case "Realizadas":
                 await tarefasRealizadas()
