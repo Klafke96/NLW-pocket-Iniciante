@@ -12,15 +12,19 @@ async function cadastrarTarefas(){
     }
 
     tarefas.push(
-        {value: tarefa, checked: false})
+        {name: tarefa, value: tarefa, checked: false})
 
 }
 
 async function listarTarefas(){
+    if (tarefas.length == 0) {
+        console.log("Não há tarefas")
+        return
+    }
     const respostas = await checkbox({
         message: "Selecione as tarefas que deseja marcar como concluídas:",
-        choices: [...tarefas],
-        instructions: false,
+            choices: [...tarefas],
+            instructions: false,
     })
 
     if (respostas.length == 0) {
@@ -37,10 +41,28 @@ async function listarTarefas(){
             return t.value == resposta
         })
 
-        tarefa.checked = true
+        if (tarefa) {
+            tarefa.checked = true;
+        }
     })
 
-        console.log("Tarefa(s) marcadas como concluída(s)")
+    console.log("Tarefa(s) marcadas como concluída(s)")
+}
+
+async function tarefasRealizadas(){
+    const realizadas = tarefas.filter((tarefa) => {
+        return tarefa.checked
+    })
+
+    if (realizadas.length == 0) {
+        console.log("Não há tarefas realizadas")
+        return
+    }
+
+    await select({
+        message: "Tarefas realizadas",
+        choices: [...realizadas]
+    })
 }
 
 async function start(){
@@ -54,8 +76,12 @@ async function start(){
                     value: "Cadastrar"
                 },
                 {
-                    name: "Lista metas",
+                    name: "Lista tarefas",
                     value: "Listar"
+                },
+                {
+                    name: "Tarefas realizadas",
+                    value: "Realizadas"
                 },
                 {
                     name: "Sair",
@@ -71,6 +97,9 @@ async function start(){
                 break
             case "Listar":
                 await listarTarefas()
+                break
+            case "Realizadas":
+                await tarefasRealizadas()
                 break
             case "Sair":
                 console.log("Até a próxima")
