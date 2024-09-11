@@ -1,19 +1,20 @@
 const { select, input, checkbox } = require("@inquirer/prompts")
 
+let mensagem = "Bem vindo ao programa de tarefas!"
 let tarefas = []
 
 async function cadastrarTarefas(){
     const tarefa = await input({message: "Digite a tarefa: "})
 
     if(tarefa.length == 0) {
-        console.log("A tarefa não pode ser vazia")
-        console.log(" ")
+        mensagem = "A tarefa não pode ser vazia"
         return
     }
 
     tarefas.push(
         {name: tarefa, value: tarefa, checked: false})
 
+    mensagem = "tarefa cadastrada com sucesso!"
 }
 
 async function listarTarefas(){
@@ -32,7 +33,7 @@ async function listarTarefas(){
     })
 
     if (respostas.length == 0) {
-        console.log("Nenhuma tarefa selecionada")
+        mensagem = "Nenhuma tarefa selecionada"
         return
     }
 
@@ -47,7 +48,7 @@ async function listarTarefas(){
         }
     })
 
-    console.log("Tarefa(s) marcadas como concluída(s)")
+    mensagem = "Tarefa(s) marcadas como concluída(s)"
 }
 
 async function tarefasRealizadas(){
@@ -56,7 +57,7 @@ async function tarefasRealizadas(){
     })
 
     if (realizadas.length == 0) {
-        console.log("Não há tarefas realizadas")
+        mensagem = "Não há tarefas realizadas"
         return
     }
 
@@ -72,7 +73,7 @@ async function tarefasAbertas(){
     })
 
     if (abertas.length == 0) {
-        console.log("Não há tarefas abertas")
+        mensagem = "Não há tarefas abertas"
         return
     }
 
@@ -93,7 +94,7 @@ async function removerTarefas(){
         instructions: false,
     })
     if (itemsDeletar.length == 0) {
-        console.log("Nenhum item para deletar")
+        mensagem = "Nenhum item para deletar"
         return
     }
 
@@ -103,12 +104,24 @@ async function removerTarefas(){
         })
     })
 
-    console.log("Tarefa(s) deletada(s) com sucesso!")
+    mensagem = "Tarefa(s) deletada(s) com sucesso!"
+}
+
+function mostrarMensagem(){
+    console.clear();
+
+    if(mensagem != ""){
+        console.log(mensagem)
+        console.log("")
+        mensagem = ""
+    }
+
 }
 
 async function start(){
 
     while(true){
+        mostrarMensagem()
 
         const opcao = await select({
             message: "--------Menu--------",
@@ -142,7 +155,6 @@ async function start(){
         switch(opcao){
             case "Cadastrar":
                 await cadastrarTarefas()
-                console.log(tarefas)
                 break
             case "Listar":
                 await listarTarefas()
